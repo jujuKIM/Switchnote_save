@@ -55,7 +55,6 @@ export default function SignInPage() {
                     <div className='logoImage'>
                         <img src={require('./images/logoBlue.png')} width='500px'/>
                         <p class='tip'>Tip. 색이 뚜렷한 명사를 사용할수록 추천 디자인은 풍성해집니다 </p>
-                        
                     </div>
 
                 </div>

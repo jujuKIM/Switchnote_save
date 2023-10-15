@@ -7,33 +7,59 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
-import { alignProperty } from '@mui/material/styles/cssUtils';
-
-// function Copyright(props) {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-//       {'Copyright © '}
-//       <Link color="inherit" href="https://naver.com/">
-//         Your Website
-//       </Link>{' '}
-//       {new Date().getFullYear()}
-//       {'.'}
-//     </Typography>
-//   );
-// }
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
 export default function SignUpPage() {
+  const [loginId, setLoginId]=React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordCheck, setPasswordCheck] = React.useState('');
+  const [nickname, setNickname] = React.useState('');
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // const data = new FormData(event.currentTarget);
+    // console.log({
+    //   id: data.get('id'),
+    //   nickname: data.get('email'),
+    //   password: data.get('password'),
+    //   passwordCheck:data.get('passwordCheck')
+    // });
+    // fetch('/user/signup', {
+    //   headers: {
+    //     'Content-Type':'application/json',
+    //   },
+    //   body:JSON.stringify({id, email, password}),
+    // })
+    // .then((response)=>response.json())
+    // .then((data)=>{
+    //   console.log(data);
+    //   navigate('/SignIn');
+    // })
+    // .catch((error)=>{
+    //   console.error(error);
+    // });
+    fetch('/jwt-api-login/join',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+      },
+      body:JSON.stringify({nickname,loginId,password,passwordCheck}),
+    })
+      .then((response)=>response.json())
+      .then((data)=>{
+        console.log(data);
+        navigate('/SignIn');
+
+      })
+      .catch((error)=>{
+        console.error(error);
+      });
+
   };
   const [gender, setGender] = useState('');
 
@@ -47,6 +73,8 @@ export default function SignUpPage() {
   
   const handleAgreePolicyChange = (event) => {
     setAgreePolicy(event.target.checked);
+    setAgreeInfoCollection(event.target.checked);
+    setAgreePromotionEmails(event.target.checked);
   };
   return (
     <div>
@@ -71,7 +99,7 @@ export default function SignUpPage() {
             </div>
         </div>
         <div className='signUpDataAll'>
-          <Box component="form" noValidate onSubmit={handleSubmit} 
+          <Box component="form"  onSubmit={handleSubmit} noValidate
           sx={{ mt: 3, alignItems: 'center',
                         "& fieldset": {borderTopColor:'white',
                                         borderRightColor:'white',
@@ -83,12 +111,14 @@ export default function SignUpPage() {
                 <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <TextField
-                    autoComplete="given-name"
-                    name="id"
+                    autoComplete="username"
+                    name="loginId"
                     required
                     fullWidth
-                    id="id"
-                    label="Id"
+                    id="loginId"
+                    label="ID"
+                    value={loginId}
+                    onChange={(e)=>setLoginId(e.target.value)}
                     autoFocus
                     />
                 </Grid>
@@ -121,17 +151,22 @@ export default function SignUpPage() {
                     id="password"
                     label="Password"
                     name="password"
-                    autoComplete="password"
+                    type='password'
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(e)=>setPassword(e.target.value)}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
                     required
                     fullWidth
-                    name="password_check"
+                    name="passwordCheck"
                     label="Password Check"
-                    type="password_check"
-                    id="password_check"
+                    type="passwordCheck"
+                    id="passwordCheck"
+                    value={passwordCheck}
+                    onChange={(e)=>setPasswordCheck(e.target.value)}
                     />
                 </Grid>
                 
@@ -144,12 +179,15 @@ export default function SignUpPage() {
                 <Grid item xs={10}>
                     <TextField
                     autoComplete="given-name"
-                    name="user_name"
+                    name="nickname"
                     required
                     fullWidth
-                    id="user_name"
+                    id="nickname"
                     label=""
                     autoFocus
+                    type="nickname"
+                    value={nickname}
+                    onChange={(e)=>setNickname(e.target.value)}
                     />
                 </Grid>
                 <Grid item xs={2} >성별</Grid>

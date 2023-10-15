@@ -6,9 +6,10 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useContext} from 'react';
+import {useContext,useState} from 'react';
 import { AuthContext } from '../App';
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const defaultTheme = createTheme({
     typography: {
@@ -20,18 +21,44 @@ const defaultTheme = createTheme({
 });
 
 export default function SignInPage() {
+    const [loginId, setLoginId] = useState('');
+    const [password, setPassword] = useState('');
     const { isLoggedIn, handleLogin } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
             event.preventDefault();
-            const data = new FormData(event.currentTarget);
-            console.log({
-                id: data.get('id'),
-                password: data.get('password'),
-            });
-            handleLogin();
-            navigate("/");
+            fetch('/jwt-api-login/login', {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body: JSON.stringify({loginId,password}),
+            })
+                // .then(response=>response.json())
+                .then((response)=>{
+                    if(response.ok) {
+                        return response.text();
+                    }else{
+                        throw new Error('로그인에 실패했습니다.');
+                    }
+                })
+                .then((data)=>{
+                    const jwtToken = data;
+                    axios.defaults.headers.common[
+                        "Authorization"
+                    ] = `Bearer ${jwtToken}`;
+                    localStorage.setItem('jwtToken',jwtToken);
+                    console.log(jwtToken);
+                    handleLogin();
+                    navigate("/");
+                })
+                .catch((error)=>{
+                    console.error(error);
+                    alert('로그인에 실패했습니다.');
+
+                });
+
     };
 
     return (
@@ -65,10 +92,12 @@ export default function SignInPage() {
                             margin="normal"
                             required
                             fullWidth
-                            id="id"
+                            id="loginId"
                             label="Id"
-                            name="id"
-                            autoComplete="id"
+                            value={loginId}
+                            onChange={(e)=>setLoginId(e.target.value)}
+                            name="loginId"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField
@@ -77,6 +106,8 @@ export default function SignInPage() {
                             fullWidth
                             name="password"
                             label="Password"
+                            value={password}
+                            onChange={(e)=>setPassword(e.target.value)}
                             type="password"
                             id="password"
                             autoComplete="current-password"
@@ -96,9 +127,9 @@ export default function SignInPage() {
                                 boxShadow:5,
                                 textDecorationStyle:'bold'
                             }}
-                            onClick={handleLogin}
+                            onClick={handleSubmit}
                         >
-                            Login 상태입니다.(어차피 이거 안보일거임)
+                            이 문자열이 보이면 안되는데
                         </Button>
                         ):(
                         <Button
@@ -112,7 +143,7 @@ export default function SignInPage() {
                                 boxShadow:5,
                                 textDecorationStyle:'bold'
                             }}
-                            onClick={handleLogin}
+                            onClick={handleSubmit}
                         >
                             Login
                         </Button>

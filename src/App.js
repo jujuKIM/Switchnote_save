@@ -50,6 +50,7 @@ function App() {
   const handleLogout = () => {
     // 로그아웃 처리
     setIsLoggedIn(false);
+    localStorage.removeItem("key");
   };
 
   /*아직 DB 구축 전이라서 이렇게 넣음..*/

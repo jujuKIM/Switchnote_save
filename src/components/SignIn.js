@@ -113,7 +113,7 @@ export default function SignInPage() {
                             autoComplete="current-password"
                         />
                         <div class="easyLogin">
-                        <a href="/"><img src={require('./images/easyLogin.png')} width="350px" alt="Easy-Login" border="0" /></a>                        
+                        {/* <a href="/"><img src={require('./images/easyLogin.png')} width="350px" alt="Easy-Login" border="0" /></a>                         */}
                         </div>
                         {isLoggedIn ? (
                             <Button
@@ -129,7 +129,7 @@ export default function SignInPage() {
                             }}
                             onClick={handleSubmit}
                         >
-                            이 문자열이 보이면 안되는데
+                            이 문자열이 보이면 안 되는데
                         </Button>
                         ):(
                         <Button

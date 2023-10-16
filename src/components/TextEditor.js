@@ -40,16 +40,23 @@ function TextEditor({ getProjectById }) {
     }
   };
 
-  const handleSaveWorkspace = () => {
-    // Workspace 저장 구현
+  const handleCreatePPT = () => {
+    // PPT 생성 구현
   };
 
   const handleDownload = () => {
-    // 파일 다운로드 구현
+    const element = document.createElement("a");
+    const file = new Blob([project ? project.content : ''], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = project ? `${project.title}.txt` : "Untitled.txt";
+    document.body.appendChild(element); 
+    element.click();
   };
-
+  
   return (
     <div>
+      <h3 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>TEXT 변환, 그리고 PPT 생성</h3>
+
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         <label htmlFor="fileName"></label>
           <MyTextarea
@@ -95,8 +102,8 @@ function TextEditor({ getProjectById }) {
       </div>
       
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap:'10px', marginTop:'50px'}}>
-        <MyButton text={'Workspace에 저장'}
-            onClick={handleSaveWorkspace}
+        <MyButton text={'PPT 생성'}
+            onClick={handleCreatePPT}
             type={"blue"}
         />
         <MyButton text={'.txt 파일로 다운로드'}
